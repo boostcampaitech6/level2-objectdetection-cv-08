@@ -1,6 +1,25 @@
 # The new config inherits a base config to highlight the necessary modification
-_base_ = '/data/ephemeral/home/level2-objectdetection-cv-08/mmdetection/projects/DiffusionDet/configs/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_coco.py'
+_base_ = '/data/ephemeral/home/level2-objectdetection-cv-08/operating_configs/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_recycle.py'
 
+# We also need to change the num_classes in head to match the dataset's annotation
+# model = dict(
+#     roi_head=dict(
+#         bbox_head=dict(num_classes=1), mask_head=dict(num_classes=1)))
+
+custom_hooks = [
+    dict(type='SubmissionHook', test_out_dir='submit')
+]
+
+# Modify dataset related settings
+data_root = 'data/recycle/'
+metainfo = {
+    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
+                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
+    'palette': [
+        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
+        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
+    ]
+}
 # We also need to change the num_classes in head to match the dataset's annotation
 model = dict(
     bbox_head=dict(
@@ -58,16 +77,6 @@ model = dict(
                            loss_weight=2.0))
     ))
 
-# Modify dataset related settings
-data_root = '/data/ephemeral/home/level2-objectdetection-cv-08/data/recycle/'
-metainfo = {
-    'classes': ('General trash', 'Paper', 'Paper pack', 'Metal', 'Glass',
-                'Plastic', 'Styrofoam', 'Plastic bag', 'Battery', 'Clothing',),
-    'palette': [
-        (220, 20, 60), (119, 11, 32), (0, 0, 230), (106, 0, 228), (60, 20, 220),
-        (0, 80, 100), (0, 0, 70), (50, 0, 192), (250, 170, 30), (255, 0, 0)
-    ]
-}
 train_dataloader = dict(
     batch_size=8,
     dataset=dict(
