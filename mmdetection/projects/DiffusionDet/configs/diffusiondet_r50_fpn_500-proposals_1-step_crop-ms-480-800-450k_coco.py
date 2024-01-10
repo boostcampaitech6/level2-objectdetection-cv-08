@@ -164,8 +164,8 @@ optim_wrapper = dict(
 train_cfg = dict(
     _delete_=True,
     type='IterBasedTrainLoop',
-    max_iters=50000, #450000
-    val_interval=3000) #75000
+    max_iters=450000, 
+    val_interval=75000) 
 
 # learning rate
 param_scheduler = [
@@ -181,5 +181,5 @@ param_scheduler = [
 ]
 
 default_hooks = dict(
-    checkpoint=dict(by_epoch=False, interval=1000, max_keep_ckpts=3)) # 5000
+    checkpoint=dict(by_epoch=False, interval=5000, max_keep_ckpts=3)) 
 log_processor = dict(by_epoch=False)

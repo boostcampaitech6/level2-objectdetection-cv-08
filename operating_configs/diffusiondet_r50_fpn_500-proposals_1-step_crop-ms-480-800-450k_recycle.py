@@ -6,10 +6,6 @@ _base_ = '/data/ephemeral/home/level2-objectdetection-cv-08/operating_configs/di
 #     roi_head=dict(
 #         bbox_head=dict(num_classes=1), mask_head=dict(num_classes=1)))
 
-custom_hooks = [
-    dict(type='SubmissionHook', test_out_dir='submit')
-]
-
 # Modify dataset related settings
 data_root = 'data/recycle/'
 metainfo = {
@@ -96,6 +92,21 @@ test_dataloader = dict(
         metainfo=metainfo,
         ann_file='test.json',
         data_prefix=dict(img='')))
+
+train_cfg = dict(
+    _delete_=True,
+    type='IterBasedTrainLoop',
+    max_iters=50000, #450000
+    val_interval=3000) #75000
+
+# hooks
+default_hooks = dict(
+    checkpoint=dict(by_epoch=False, interval=1000, max_keep_ckpts=3)) # 5000
+log_processor = dict(by_epoch=False)
+
+custom_hooks = [
+    dict(type='SubmissionHook', test_out_dir='submit')
+]
 
 # Modify metric related settings
 val_evaluator = dict(ann_file=data_root + 'train.json')
