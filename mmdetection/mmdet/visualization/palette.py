@@ -4,6 +4,7 @@ from typing import List, Tuple, Union
 import mmcv
 import numpy as np
 from mmengine.utils import is_str
+import torch
 
 
 def palette_val(palette: List[tuple]) -> List[tuple]:
@@ -87,7 +88,9 @@ def _get_adaptive_scales(areas: np.ndarray,
     Returns:
         ndarray: The adaotive scales with the shape of (n, ).
     """
-    scales = 0.5 + (areas - min_area) // (max_area - min_area)
+    # User Warning with updated torch version 
+    # scales = 0.5 + (areas - min_area) // (max_area - min_area)
+    scales = 0.5 + torch.div(areas - min_area, max_area - min_area, rounding_mode='trunc')
     scales = np.clip(scales, 0.5, 1.0)
     return scales
 

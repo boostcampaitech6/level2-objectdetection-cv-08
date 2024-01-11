@@ -1,5 +1,5 @@
 # The new config inherits a base config to highlight the necessary modification
-_base_ = '/data/ephemeral/home/level2-objectdetection-cv-08/operating_configs/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_recycle.py'
+_base_ = 'projects/DiffusionDet/configs/diffusiondet_r50_fpn_500-proposals_1-step_crop-ms-480-800-450k_coco.py'
 
 # We also need to change the num_classes in head to match the dataset's annotation
 # model = dict(
