@@ -73,11 +73,11 @@ class WandbLoggingHook(Hook):
 
         wandb.log({
             "train_loss": outputs['loss'],
-            "train_loss_rpn_cls": outputs['loss_rpn_cls'],
-            "train_loss_rpn_bbox": outputs['loss_rpn_bbox'],
+            # "train_loss_rpn_cls": outputs['loss_rpn_cls'],
+            # "train_loss_rpn_bbox": outputs['loss_rpn_bbox'],
             "train_loss_cls": outputs['loss_cls'],
             "train_loss_bbox": outputs['loss_bbox'],
-            "train_acc": outputs['acc']
+            # "train_acc": outputs['acc']
         })
 
     def after_val_iter(self, 
