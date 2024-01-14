@@ -5,7 +5,7 @@ import cv2
 import torch
 import json
 from PIL import Image, ImageDraw
-import matplotlib.patches as patches
+import shutil
 
 
 def xywh2xyxy(x, w=1024, h=1024, padw=0, padh=0):
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     if mode == "save":
         data_path = "/data/ephemeral/home/level2-objectdetection-cv-08/data/recycle"
         img_folder = os.path.join(data_path, "train")
-        img_files = [i for i in os.listdir(img_folder) if i.endswith("jpg")]
+        # img_files = [i for i in os.listdir(img_folder) if i.endswith("jpg")]
 
         # train.json 파일 경로
         json_path = os.path.join(data_path, "train_eye_eda.json")
@@ -196,6 +196,12 @@ if __name__ == "__main__":
         # JSON 파일에서 이미지 및 바운딩 박스 정보 읽기
         with open(json_path, "r") as json_file:
             data = json.load(json_file)
+
+        img_files = set([anno["image_id"] for anno in data["annotations"]])
+        img_files = ["{0:04d}.jpg".format(image_id) for image_id in img_files]
+
+        if not os.path.exists(os.path.join(data_path, "train_mosaic")):
+            os.mkdir(os.path.exists(os.path.join(data_path, "train_mosaic")))
 
         cnt = 4000
         image_id = 100000
@@ -240,6 +246,8 @@ if __name__ == "__main__":
                 os.path.join(data_path, "train_mosaic", "{0:06d}.jpg".format(image_id)),
                 "JPEG",
             )
+            print(f"Image {image_id} saved")
+
             # 기존 json에 추가
             data["images"].append(image_info)
             data["annotations"].extend(bbox_info)
