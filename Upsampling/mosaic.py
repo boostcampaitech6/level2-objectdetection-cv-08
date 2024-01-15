@@ -183,6 +183,7 @@ if __name__ == "__main__":
     # image files and labels
     # train set & not Scratch
     mode = "save"
+    folder_name = "train_mosaic_1000"
 
     # save : upsampling 해서 저장하는 모드
     if mode == "save":
@@ -200,8 +201,8 @@ if __name__ == "__main__":
         img_files = set([anno["image_id"] for anno in data["annotations"]])
         img_files = ["{0:04d}.jpg".format(image_id) for image_id in img_files]
 
-        if not os.path.exists(os.path.join(data_path, "train_mosaic")):
-            os.mkdir(os.path.exists(os.path.join(data_path, "train_mosaic")))
+        if not os.path.exists(os.path.join(data_path, folder_name)):
+            os.mkdir(os.path.join(data_path, folder_name))
 
         cnt = 4000
         image_id = 100000
@@ -232,7 +233,7 @@ if __name__ == "__main__":
                 "width": 1024,
                 "height": 1024,
                 "file_name": os.path.join(
-                    "train_mosaic", "{0:06d}.jpg".format(image_id)
+                    folder_name, "{0:06d}.jpg".format(image_id)
                 ),
                 "id": image_id,
             }
@@ -243,7 +244,7 @@ if __name__ == "__main__":
             # 이미지 저장
             img = Image.fromarray(img4)
             img.save(
-                os.path.join(data_path, "train_mosaic", "{0:06d}.jpg".format(image_id)),
+                os.path.join(data_path, folder_name, "{0:06d}.jpg".format(image_id)),
                 "JPEG",
             )
             print(f"Image {image_id} saved")
