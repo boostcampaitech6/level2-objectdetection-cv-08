@@ -13,6 +13,7 @@ from .submission_hook import SubmissionHook
 from .metric_hook import MetricHook
 from .wandb_logging_hook import WandbLoggingHook
 from .wandb_visualization_hook import WandbVizHook
+from .dataset_switch_hook import DatasetSwitchHook
 
 __all__ = [
     "YOLOXModeSwitchHook",
@@ -29,4 +30,5 @@ __all__ = [
     "SubmissionHook",
     "MetricHook",
     "WandbVizHook",
+    "DatasetSwitchHook",
 ]
