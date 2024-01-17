@@ -15,10 +15,10 @@ class DatasetSwitchHook(Hook):
     def before_train_epoch(self, runner):
         epoch = runner.epoch
         train_loader = runner.train_dataloader
-        if runner.max_epochs - epoch <= self.last and not self.has_switched:
-            runner.logger.info('Switch train dataset now!')
-            
+        if runner.max_epochs - epoch < self.last and not self._has_switched:
             train_loader.dataset.ann_file = self.val_file
+            runner.logger.info(f'Switch train dataset now! {train_loader.dataset.ann_file}')
+
             if hasattr(train_loader, 'persistent_workers'
                        ) and train_loader.persistent_workers is True:
                 train_loader._DataLoader__initialized = False
@@ -31,10 +31,9 @@ class DatasetSwitchHook(Hook):
     def before_val_epoch(self, runner):
         epoch = runner.epoch
         val_loader = runner.val_dataloader
-        if runner.max_epochs - epoch <= self.last and not self.has_switched:
-            runner.logger.info('Switch val dataset now!')
-            
+        if runner.max_epochs - epoch < self.last and not self._has_switched:
             val_loader.dataset.ann_file = self.train_file
+            runner.logger.info(f'Switch val dataset now! {val_loader.dataset.ann_file}')
             if hasattr(val_loader, 'persistent_workers'
                        ) and val_loader.persistent_workers is True:
                 val_loader._DataLoader__initialized = False
