@@ -64,9 +64,8 @@ def parse_args():
     parser.add_argument(
         "--val",
         type=bool,
-        nargs="*",
-        default=True,
-        help="val is True test is False",
+        default=False,
+        help="val is True, test is False",
     )
     parser.add_argument(
         "--weights",
@@ -120,7 +119,7 @@ def main():
 
     submission_df = [pd.read_csv(file) for file in args.csv]
     image_ids = submission_df[0]["image_id"].tolist()
-    assert len(image_ids) == 830
+    # assert len(image_ids) == 830
 
     prediction_strings = []
     file_names = []
@@ -154,36 +153,36 @@ def main():
         scores_list.append(list(map(float, predict_list[:, 1].tolist())))
         labels_list.append(list(map(int, predict_list[:, 0].tolist())))
         results.append([boxes_list, scores_list, labels_list])
-    if len(boxes_list):
-        # boxes, scores, labels = nms(boxes_list, scores_list, labels_list,iou_thr=iou_thr)
-        # boxes, scores, labels = soft_nms(box_list, scores_list, labels_list, iou_thr=iou_thr)
-        # boxes, scores, labels = non_maximum_weighted(boxes_list, scores_list, labels_list,iou_thr=iou_thr)
-        # boxes, scores, labels = weighted_boxes_fusion(boxes_list, scores_list, labels_list,iou_thr=0.5,conf_type='box_and_model_avg')
-        boxes, scores, labels = weighted_boxes_fusion(
-            boxes_list, scores_list, labels_list, iou_thr=0.55
-        )
-
-        for box, score, label in zip(boxes, scores, labels):
-            prediction_string += (
-                str(int(label))
-                + " "
-                + str(score)
-                + " "
-                + str(box[0] * image_size)
-                + " "
-                + str(box[1] * image_size)
-                + " "
-                + str(box[2] * image_size)
-                + " "
-                + str(box[3] * image_size)
-                + " "
+        if len(boxes_list):
+            # boxes, scores, labels = nms(boxes_list, scores_list, labels_list,iou_thr=iou_thr)
+            # boxes, scores, labels = soft_nms(box_list, scores_list, labels_list, iou_thr=iou_thr)
+            # boxes, scores, labels = non_maximum_weighted(boxes_list, scores_list, labels_list,iou_thr=iou_thr)
+            # boxes, scores, labels = weighted_boxes_fusion(boxes_list, scores_list, labels_list,iou_thr=0.5,conf_type='box_and_model_avg')
+            boxes, scores, labels = weighted_boxes_fusion(
+                boxes_list, scores_list, labels_list, iou_thr=0.55
             )
 
-    prediction_strings.append(prediction_string)
-    file_names.append(image_id)
+            for box, score, label in zip(boxes, scores, labels):
+                prediction_string += (
+                    str(int(label))
+                    + " "
+                    + str(score)
+                    + " "
+                    + str(box[0] * image_size)
+                    + " "
+                    + str(box[1] * image_size)
+                    + " "
+                    + str(box[2] * image_size)
+                    + " "
+                    + str(box[3] * image_size)
+                    + " "
+                )
+
+        prediction_strings.append(prediction_string)
+        file_names.append(image_id)
 
     for i in range(len(results)):
-        bboxes, scores, labels = nms(
+        bboxes, scores, labels = weighted_boxes_fusion(
             results[i][0],
             results[i][1],
             results[i][2],
@@ -203,18 +202,18 @@ def main():
         pred_instances.labels = labels
 
         pred_instances_dict = {"boxes": [], "scores": [], "labels": []}
-        # pred_instances_dict["boxes"] = torch.tensor(bboxes).to(args.device)
-        # pred_instances_dict["scores"] = torch.tensor(scores).to(args.device)
-        # pred_instances_dict["labels"] = torch.tensor(labels).to(args.device)
-        pred_instances_dict["boxes"] = (
-            torch.tensor(results[i][0]).squeeze().to(args.device)
-        )
-        pred_instances_dict["scores"] = (
-            torch.tensor(results[i][1]).squeeze().to(args.device)
-        )
-        pred_instances_dict["labels"] = (
-            torch.tensor(results[i][2]).squeeze().to(args.device)
-        )
+        pred_instances_dict["boxes"] = torch.tensor(bboxes).to(args.device)
+        pred_instances_dict["scores"] = torch.tensor(scores).to(args.device)
+        pred_instances_dict["labels"] = torch.tensor(labels).to(args.device)
+        # pred_instances_dict["boxes"] = (
+        #     torch.tensor(results[i][0]).squeeze().to(args.device)
+        # )
+        # pred_instances_dict["scores"] = (
+        #     torch.tensor(results[i][1]).squeeze().to(args.device)
+        # )
+        # pred_instances_dict["labels"] = (
+        #     torch.tensor(results[i][2]).squeeze().to(args.device)
+        # )
 
         pred_base_list.append(pred_instances_dict)
     if args.val:
