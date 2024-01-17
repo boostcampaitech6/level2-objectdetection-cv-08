@@ -182,6 +182,10 @@ def main():
             ]
 
         for res, raw in zip(results, result_raw["predictions"]):
+            for idx in range(len(raw["bboxes"])):
+                raw["bboxes"][idx] = list(
+                    map(lambda x: float(x / 1024), raw["bboxes"][idx])
+                )
             res["bboxes_list"].append(raw["bboxes"])
             res["scores_list"].append(raw["scores"])
             res["labels_list"].append(raw["labels"])
@@ -226,6 +230,8 @@ def main():
         iou_type="bbox", class_metrics=True, iou_thresholds=[0.5]
     )
     for pred, gt in zip(pred_base_list, gt_base_list):
+        pred["boxes"] = pred["boxes"] * 1024
+        pred["labels"] = pred["labels"].type(torch.int)
         base_metric.update([pred], [gt])
         base_metric50.update([pred], [gt])
 
