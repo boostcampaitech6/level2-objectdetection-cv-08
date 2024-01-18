@@ -28,9 +28,11 @@ class SubmissionHook(Hook):
         test_out_dir (str) : 저장할 경로
     """
 
-    def __init__(self, test_out_dir="submit"):
+    def __init__(self, test_out_dir="submit", mode="test", out_file="submission"):
         self.test_outputs_data = []
         self.test_out_dir = test_out_dir
+        self.mode = mode
+        self.out_file = out_file
 
     def after_test_iter(
         self,
@@ -72,7 +74,7 @@ class SubmissionHook(Hook):
                     + str(bbox[3])
                     + " "
                 )
-            match = re.search(r"test/(\d+\.jpg)", output.img_path)
+            match = re.search(rf"{self.mode}/(\d+\.jpg)", output.img_path)
             if match:
                 self.test_outputs_data.append(
                     [int(match.group(1)[:4]), prediction_string, match.group(0)]
@@ -102,7 +104,7 @@ class SubmissionHook(Hook):
         submission["PredictionString"] = prediction_strings
         submission["image_id"] = file_names
         print(submission.head())
-        submission.to_csv(osp.join(self.test_out_dir, "submission.csv"), index=None)
+        submission.to_csv(osp.join(self.test_out_dir, f"{self.out_file}.csv"), index=None)
         print(
             "submission saved to {}".format(
                 osp.join(self.test_out_dir, "submission.csv")
